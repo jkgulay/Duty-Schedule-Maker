@@ -1,5 +1,5 @@
 import { useState, type FormEvent, type ReactNode } from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
+import { Link, Navigate, useLocation } from 'react-router-dom';
 
 import { useAuth } from '@/hooks/useAuth';
 import { ROUTES } from '@/routes/paths';
@@ -84,6 +84,13 @@ export function LoginPage(): ReactNode {
           {isSubmitting ? 'Signing in…' : 'Sign in'}
         </button>
       </form>
+
+      <p className="mt-4 text-sm text-gray-600">
+        Need an account?{' '}
+        <Link to={ROUTES.signUp} className="font-medium text-brand underline">
+          Sign up
+        </Link>
+      </p>
     </main>
   );
 }

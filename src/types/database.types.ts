@@ -103,6 +103,7 @@ export type ProfileRow = {
   id: string;
   hospital_id: string | null;
   role: Role;
+  email: string | null;
   created_at: string;
 };
 

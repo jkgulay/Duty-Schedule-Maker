@@ -56,16 +56,21 @@ psql "<connection-string>" -f supabase/seed.sql
 supabase start            # applies migrations + seed.sql automatically
 ```
 
-### After a user signs up
+### Accounts and roles
 
-Profiles are not seeded. A new user self-provisions a `profiles` row as
-`viewer`; an admin then elevates them via a privileged connection:
+Users register at `/signup` (or you add them in the Supabase dashboard). A
+trigger creates their `profiles` row as `viewer` with no hospital, so they can
+log in but see nothing until an **approver** adds them from the in-app
+**Users** page (`/admin/users`): pending sign-ups appear there and the approver
+assigns a hospital + role.
+
+The **first** approver has to be promoted by hand once (chicken-and-egg):
 
 ```sql
 update public.profiles
 set hospital_id = '00000000-0000-0000-0000-0000000000a1',
-    role = 'scheduler'
-where id = '<auth.users.id>';
+    role = 'approver'
+where email = 'you@example.com';
 ```
 
 ## Architecture (per `CLAUDE.md`)

@@ -8,6 +8,7 @@ import { LoginPage } from '@/pages/LoginPage';
 import { ScheduleEditorPage } from '@/pages/ScheduleEditorPage';
 import { ScheduleListPage } from '@/pages/ScheduleListPage';
 import { ScheduleViewPage } from '@/pages/ScheduleViewPage';
+import { SignUpPage } from '@/pages/SignUpPage';
 import { ROUTES } from '@/routes/paths';
 
 // Admin screens are not needed on first paint — load them on demand.
@@ -23,8 +24,12 @@ const ShiftTypesPage = lazy(() =>
 const SignatoriesPage = lazy(() =>
   import('@/pages/admin/SignatoriesPage').then((m) => ({ default: m.SignatoriesPage })),
 );
+const UsersPage = lazy(() =>
+  import('@/pages/admin/UsersPage').then((m) => ({ default: m.UsersPage })),
+);
 
 const ADMIN_ROLES = [ROLE.SCHEDULER, ROLE.APPROVER] as const;
+const APPROVER_ONLY = [ROLE.APPROVER] as const;
 
 export function AppRoutes(): ReactNode {
   return (
@@ -37,6 +42,7 @@ export function AppRoutes(): ReactNode {
     >
       <Routes>
         <Route path={ROUTES.login} element={<LoginPage />} />
+        <Route path={ROUTES.signUp} element={<SignUpPage />} />
 
         <Route
           path={ROUTES.schedules}
@@ -92,6 +98,14 @@ export function AppRoutes(): ReactNode {
           element={
             <RequireAuth allowedRoles={ADMIN_ROLES}>
               <SignatoriesPage />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path={ROUTES.adminUsers}
+          element={
+            <RequireAuth allowedRoles={APPROVER_ONLY}>
+              <UsersPage />
             </RequireAuth>
           }
         />

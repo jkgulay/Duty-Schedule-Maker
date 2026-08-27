@@ -29,6 +29,21 @@ export async function signInWithPassword(email: string, password: string): Promi
   }
 }
 
+/**
+ * Registers a new user. Returns whether email confirmation is still required
+ * (no session yet) or whether the user is already signed in.
+ */
+export async function signUp(
+  email: string,
+  password: string,
+): Promise<{ needsEmailConfirmation: boolean }> {
+  const { data, error } = await supabase.auth.signUp({ email, password });
+  if (error !== null) {
+    throw new Error(`Sign up: ${error.message}`);
+  }
+  return { needsEmailConfirmation: data.session === null };
+}
+
 export async function signOut(): Promise<void> {
   const { error } = await supabase.auth.signOut();
   if (error !== null) {

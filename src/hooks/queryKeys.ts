@@ -6,6 +6,7 @@ export const queryKeys = {
   shiftTypes: ['shiftTypes'] as const,
   legendAbbreviations: ['legendAbbreviations'] as const,
   signatories: ['signatories'] as const,
+  hospitalMembers: ['hospitalMembers'] as const,
   schedules: (wardId: string) => ['schedules', wardId] as const,
   schedule: (scheduleId: string) => ['schedule', scheduleId] as const,
   scheduleEntries: (scheduleId: string) => ['scheduleEntries', scheduleId] as const,

@@ -2,23 +2,36 @@ import { useState, type ReactNode } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 
 import { Button } from '@/components/ui/Button';
-import { isEditorRole } from '@/constants/roles';
+import { isEditorRole, ROLE, type Role } from '@/constants/roles';
 import { useAuth } from '@/hooks/useAuth';
 import { ROUTES } from '@/routes/paths';
+
+type Visibility = 'all' | 'editor' | 'approver';
 
 interface NavItem {
   to: string;
   label: string;
-  editorOnly: boolean;
+  visibleFor: Visibility;
 }
 
 const NAV_ITEMS: readonly NavItem[] = [
-  { to: ROUTES.schedules, label: 'Schedules', editorOnly: false },
-  { to: ROUTES.adminHospital, label: 'Hospital', editorOnly: true },
-  { to: ROUTES.adminStaff, label: 'Staff', editorOnly: true },
-  { to: ROUTES.adminShiftTypes, label: 'Shift types', editorOnly: true },
-  { to: ROUTES.adminSignatories, label: 'Signatories', editorOnly: true },
+  { to: ROUTES.schedules, label: 'Schedules', visibleFor: 'all' },
+  { to: ROUTES.adminHospital, label: 'Hospital', visibleFor: 'editor' },
+  { to: ROUTES.adminStaff, label: 'Staff', visibleFor: 'editor' },
+  { to: ROUTES.adminShiftTypes, label: 'Shift types', visibleFor: 'editor' },
+  { to: ROUTES.adminSignatories, label: 'Signatories', visibleFor: 'editor' },
+  { to: ROUTES.adminUsers, label: 'Users', visibleFor: 'approver' },
 ];
+
+function canSee(visibleFor: Visibility, role: Role | null): boolean {
+  if (visibleFor === 'all') {
+    return true;
+  }
+  if (visibleFor === 'approver') {
+    return role === ROLE.APPROVER;
+  }
+  return isEditorRole(role);
+}
 
 function linkClass({ isActive }: { isActive: boolean }): string {
   return isActive ? 'text-brand-dark font-semibold' : 'text-gray-600 hover:text-gray-900';
@@ -29,7 +42,7 @@ export function Navbar(): ReactNode {
   const navigate = useNavigate();
   const [isSigningOut, setIsSigningOut] = useState(false);
 
-  const visibleItems = NAV_ITEMS.filter((item) => !item.editorOnly || isEditorRole(role));
+  const visibleItems = NAV_ITEMS.filter((item) => canSee(item.visibleFor, role));
 
   async function handleSignOut(): Promise<void> {
     setIsSigningOut(true);

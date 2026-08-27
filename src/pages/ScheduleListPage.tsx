@@ -21,7 +21,7 @@ import { formatMonth } from '@/utils/formatMonth';
 export function ScheduleListPage(): ReactNode {
   useDocumentTitle('Schedules');
   const navigate = useNavigate();
-  const { role } = useAuth();
+  const { role, hospitalId } = useAuth();
   const canEdit = isEditorRole(role);
 
   const wardsQuery = useWards();
@@ -36,7 +36,12 @@ export function ScheduleListPage(): ReactNode {
     <AppLayout>
       <h1 className="mb-6 text-2xl font-semibold text-gray-900">Schedules</h1>
 
-      {wardsQuery.isLoading ? (
+      {hospitalId === null ? (
+        <EmptyState
+          title="Your account isn’t linked to a hospital yet"
+          description="An approver needs to add you from the Users page before you can see or build schedules."
+        />
+      ) : wardsQuery.isLoading ? (
         <Spinner label="Loading wards" />
       ) : wardsQuery.isError ? (
         <InlineBanner tone="error">{wardsQuery.error.message}</InlineBanner>
