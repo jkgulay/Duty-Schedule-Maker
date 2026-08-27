@@ -1,0 +1,28 @@
+# dependencies
+node_modules/
+
+# build output
+dist/
+dist-ssr/
+*.tsbuildinfo
+
+# environment — never commit real secrets
+.env
+.env.local
+.env.*.local
+supabase/functions/.env
+
+# supabase CLI local state
+supabase/.branches/
+supabase/.temp/
+
+# editor / OS
+.DS_Store
+.history/
+*.log
+npm-debug.log*
+# markdown notes
+*.md
+!README.md
+# sql migrations
+supabase/migrations/*.sql

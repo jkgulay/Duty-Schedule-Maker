@@ -1,0 +1,22 @@
+# Supabase CLI configuration.
+# Replace `project_id` with your own project ref before running `supabase link`.
+project_id = "duty-schedule-maker"
+
+[db]
+port = 54322
+major_version = 15
+
+[db.seed]
+enabled = true
+sql_paths = ["./seed.sql"]
+
+[studio]
+port = 54323
+
+[auth]
+enable_signup = true
+site_url = "http://localhost:5173"
+additional_redirect_urls = ["http://localhost:5173"]
+
+[storage]
+enabled = true
