@@ -43,7 +43,7 @@ export function ScheduleDocument({
   signatories,
 }: ScheduleDocumentProps): ReactNode {
   return (
-    <article className="mx-auto max-w-[1100px] border border-gray-300 bg-white p-6 text-gray-900">
+    <article className="schedule-document mx-auto max-w-[1100px] border border-gray-300 bg-white p-6 text-gray-900 print:max-w-none print:border-0 print:p-0">
       <ScheduleHeader hospital={hospital} />
       <ScheduleTitle monthLabel={formatMonth(month, year)} wardName={wardName} />
 
@@ -57,7 +57,7 @@ export function ScheduleDocument({
         />
       </div>
 
-      <div className="mt-6 flex flex-wrap justify-between gap-8">
+      <div className="mt-6 flex flex-wrap justify-between gap-8 break-inside-avoid print:mt-3">
         <ShiftLegend shiftTypes={shiftTypes} abbreviations={legendAbbreviations} />
         <SignatoryBlock signatories={signatories} />
       </div>

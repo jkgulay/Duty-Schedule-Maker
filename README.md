@@ -12,13 +12,12 @@ a staff/day range, autosave with a lock-aware error banner), and
 `ScheduleViewPage` (full read-only document via `ScheduleDocument`, plus a
 **Download PDF** button) are functional.
 
-The `generate-schedule-pdf` Edge Function
-(`supabase/functions/generate-schedule-pdf/`) authorises the caller under RLS,
-loads the schedule with the service-role key, builds print HTML that mirrors
-`ScheduleDocument` (data-shaping helpers live in `_lib/`, a Deno-side mirror of
-`src/utils`/`src/constants`), and POSTs it to an external headless-browser service
-for a Long Bond landscape PDF. Set `HEADLESS_PDF_API_URL` / `HEADLESS_PDF_API_TOKEN`
-via `supabase secrets set` — see that folder's `README.md`.
+PDF export is done with the browser's own print dialog: the schedule view has a
+**Print / Save as PDF** button (`window.print()`), and a `@media print` block in
+`src/styles/index.css` prints only the `ScheduleDocument` at Long Bond landscape.
+No server or external service. (An unused server-side alternative —
+`supabase/functions/generate-schedule-pdf/` — is left in the repo but not wired
+up.)
 
 ## Prerequisites
 
@@ -88,8 +87,8 @@ supabase/functions/   Edge Functions (generate-schedule-pdf)
 ```
 
 `resolveShiftDisplay` in `src/utils/` is the single source of truth for
-turning a schedule entry into a cell's text/colour/label — the on-screen grid,
-the legend, and the future PDF template all consume it.
+turning a schedule entry into a cell's text/colour/label — the grid and the
+legend both consume it, and it prints as-is.
 
 ## Access model
 
@@ -100,17 +99,13 @@ signatories are locked at the database level regardless of the UI.
 
 ## PDF export
 
-Target page: **landscape Long Bond, 8.5in × 13in**. The `generate-schedule-pdf`
-Edge Function builds the schedule HTML and POSTs it to an external
-headless-browser API (e.g. Browserless) to render the PDF; the service-role key
-and the rendering token stay server-side. The **Download PDF** button on the
-schedule view calls the function via `supabase.functions.invoke`, receives the
-PDF blob, and triggers the browser download — no PDF work happens in the browser.
-Failures surface an inline error with a retry action. Deploy and configure:
+The schedule view has a **Print / Save as PDF** button that calls
+`window.print()`. A `@media print` block in `src/styles/index.css` hides all app
+chrome and prints only `.schedule-document` at `@page { size: 13in 8.5in }`
+(landscape Long Bond), with `print-color-adjust: exact` so the shift colours
+render. Users pick "Save as PDF" (or a real printer) in the OS dialog. No server,
+no external service, no configuration.
 
-```bash
-supabase functions deploy generate-schedule-pdf
-supabase secrets set \
-  HEADLESS_PDF_API_URL="https://production-sfo.browserless.io/pdf" \
-  HEADLESS_PDF_API_TOKEN="<token>"
-```
+A server-side alternative lives unused at `supabase/functions/generate-schedule-pdf/`
+(Edge Function → external headless-browser API). It's not wired into the app;
+delete the folder if you don't want it.

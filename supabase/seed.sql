@@ -48,7 +48,7 @@ values
   ('00000000-0000-0000-0000-0000000000a1', 'Macomao, Mary Anne',            'RN', true),
   ('00000000-0000-0000-0000-0000000000a1', 'Miculob, Gretchen R.',          'RN', true),
   ('00000000-0000-0000-0000-0000000000a1', 'Noh, Jin Mae',                  'RN', true)
-on conflict do nothing;
+on conflict (hospital_id, full_name) do nothing;
 
 -- ---------------------------------------------------------------------------
 -- shift_types  (the configurable legend)
@@ -85,4 +85,4 @@ values
   ('00000000-0000-0000-0000-0000000000a1', 'Alma A. Dominguez, RN',      'Nurse II',            'prepared_by'),
   ('00000000-0000-0000-0000-0000000000a1', 'Mila A. Casio, RN',          'Chief Nurse',         'noted_by'),
   ('00000000-0000-0000-0000-0000000000a1', 'Gertrudes R. Cembrano, MD',  'Chief of Hospital I', 'approved_by')
-on conflict do nothing;
+on conflict (hospital_id, full_name, default_role) do nothing;

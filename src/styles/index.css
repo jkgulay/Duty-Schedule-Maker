@@ -10,3 +10,50 @@ body {
   @apply bg-gray-50 text-gray-900 antialiased;
   font-family: theme('fontFamily.document');
 }
+
+/*
+ * Print: Long Bond landscape (see LONG_BOND_LANDSCAPE in src/constants/pdf.ts).
+ * App chrome is removed with `print:hidden` utilities; this block makes the
+ * schedule grid fill the page and flow cleanly onto further pages when the
+ * staff list is long — the `<thead>` (letterhead + day headers) repeats on
+ * every page, and rows are never split.
+ */
+@media print {
+  @page {
+    size: 13in 8.5in;
+    margin: 0.35in;
+  }
+
+  html,
+  body {
+    background: #fff;
+  }
+
+  .schedule-document {
+    font-size: 9.5px;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .schedule-document table {
+    width: 100%;
+  }
+
+  /* Repeat the day-header row on every printed page; keep body rows intact. */
+  .schedule-document thead {
+    display: table-header-group;
+  }
+
+  /* Generous rows so a short roster still fills the sheet; a long roster keeps
+     the same row height and flows onto more pages. */
+  .schedule-document tbody tr {
+    height: 0.5in;
+    break-inside: avoid;
+  }
+
+  .schedule-document td,
+  .schedule-document th {
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+}

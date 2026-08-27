@@ -41,7 +41,7 @@ export function ShiftCell({
   if (!editable) {
     return (
       <td
-        className="border border-gray-300 px-1 text-center text-xs"
+        className="border border-gray-300 px-1 text-center text-xs leading-tight print:px-0.5 print:text-[8px]"
         style={{ backgroundColor: background, color }}
       >
         <span aria-label={label}>{display.text}</span>

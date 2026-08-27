@@ -21,6 +21,8 @@ interface ScheduleGridProps {
 
 const NO_OP: (staffId: string, dayOfMonth: number, next: CellState) => void = () => {};
 
+const NAME_COL = 'w-64 print:w-[1.9in]';
+
 export function ScheduleGrid({
   staff,
   days,
@@ -32,13 +34,20 @@ export function ScheduleGrid({
   const shiftTypesIndex = useMemo(() => indexShiftTypes(shiftTypes), [shiftTypes]);
 
   return (
-    <div className="overflow-x-auto border border-gray-300">
-      <table className="border-collapse text-xs">
+    <div className="overflow-x-auto border border-gray-300 print:overflow-visible print:border-0">
+      <table className="w-full border-collapse text-xs print:table-fixed">
+        <colgroup>
+          <col className={NAME_COL} />
+          {days.map((day) => (
+            <col key={day.getDate()} />
+          ))}
+        </colgroup>
+        {/* The day-header row repeats on every printed page (native <thead>). */}
         <thead>
           <tr>
             <th
               scope="col"
-              className="sticky left-0 z-10 min-w-[12rem] border border-gray-300 bg-gray-100 px-2 py-1 text-left"
+              className={`sticky left-0 z-10 border border-gray-300 bg-gray-100 px-2 py-1 text-center print:static ${NAME_COL}`}
             >
               Name of Staff
             </th>
@@ -48,7 +57,7 @@ export function ScheduleGrid({
                 <th
                   key={day.getDate()}
                   scope="col"
-                  className={`w-8 border border-gray-300 bg-gray-100 px-1 py-1 text-center ${
+                  className={`border border-gray-300 bg-gray-100 px-1 py-1 text-center ${
                     weekend ? 'text-red-600' : 'text-gray-700'
                   }`}
                 >
@@ -61,10 +70,10 @@ export function ScheduleGrid({
         </thead>
         <tbody>
           {staff.map((member) => (
-            <tr key={member.id}>
+            <tr key={member.id} className="break-inside-avoid">
               <th
                 scope="row"
-                className="sticky left-0 z-10 border border-gray-300 bg-white px-2 py-1 text-left font-normal"
+                className={`sticky left-0 z-10 border border-gray-300 bg-white px-2 py-1 text-center font-medium print:static ${NAME_COL}`}
               >
                 {member.full_name}
                 {member.credentials !== '' && `, ${member.credentials}`}

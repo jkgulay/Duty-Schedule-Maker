@@ -55,7 +55,7 @@ export function Navbar(): ReactNode {
   }
 
   return (
-    <header className="border-b border-gray-200 bg-white">
+    <header className="border-b border-gray-200 bg-white print:hidden">
       <nav className="mx-auto flex max-w-6xl items-center gap-6 px-6 py-3 text-sm">
         <span className="font-semibold text-gray-900">Duty Schedules</span>
         {visibleItems.map((item) => (
