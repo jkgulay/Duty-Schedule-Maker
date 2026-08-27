@@ -6,25 +6,19 @@ concerns (database, auth, storage, PDF generation) run on Supabase.
 
 See [`CLAUDE.md`](./CLAUDE.md) for the binding code standards and architecture.
 
-## Status
-
-| Phase | Scope | State |
-| ----- | ----- | ----- |
-| 1 | Supabase schema + RLS policies + seed | ✅ done |
-| 2 | Vite/React scaffold: client, `api/`, `hooks/`, routing shell | ✅ done |
-| 3 | Admin pages (hospital+wards, staff, shift types, signatories) | ✅ done |
-| 4 | Schedule editor grid (create schedule, assign/bulk-assign, autosave) | ✅ done |
-| 5 | Read-only schedule view page (header, grid, legend, signatories) | ✅ done |
-| 6 | `generate-schedule-pdf` Edge Function + download button | ⬜ not started |
-| 7 | Auth + role-based access + approval workflow lock | ⬜ partial (RLS + guards in place) |
-
 The admin pages, `ScheduleListPage` (create + list schedules per ward),
 `ScheduleEditorPage` (spreadsheet grid: per-cell shift picker, bulk-assign across
 a staff/day range, autosave with a lock-aware error banner), and
-`ScheduleViewPage` (full read-only document: `ScheduleHeader` + `ScheduleTitle` +
-`ScheduleGrid` + `ShiftLegend` + `SignatoryBlock`, composed by `ScheduleDocument`)
-are functional. `ScheduleDocument` is the shared layout the phase-6 PDF template
-will mirror.
+`ScheduleViewPage` (full read-only document via `ScheduleDocument`, plus a
+**Download PDF** button) are functional.
+
+The `generate-schedule-pdf` Edge Function
+(`supabase/functions/generate-schedule-pdf/`) authorises the caller under RLS,
+loads the schedule with the service-role key, builds print HTML that mirrors
+`ScheduleDocument` (data-shaping helpers live in `_lib/`, a Deno-side mirror of
+`src/utils`/`src/constants`), and POSTs it to an external headless-browser service
+for a Long Bond landscape PDF. Set `HEADLESS_PDF_API_URL` / `HEADLESS_PDF_API_TOKEN`
+via `supabase secrets set` — see that folder's `README.md`.
 
 ## Prerequisites
 
@@ -85,7 +79,7 @@ src/utils/    Pure helpers (formatMonth, getWeekdayLabel, resolveShiftDisplay �
 src/types/    Shared types mirroring the Postgres schema
 src/constants/  Named constants for roles, statuses, shift/legend semantics
 supabase/migrations/  SQL schema, RLS helpers, policies, storage
-supabase/functions/   Edge Functions (PDF export — phase 6)
+supabase/functions/   Edge Functions (generate-schedule-pdf)
 ```
 
 `resolveShiftDisplay` in `src/utils/` is the single source of truth for
@@ -99,9 +93,19 @@ every table — route guards in the SPA are UX only. Schedule status advances
 `draft → noted → approved`; once a schedule leaves `draft`, its entries and
 signatories are locked at the database level regardless of the UI.
 
-## PDF export (phase 6)
+## PDF export
 
 Target page: **landscape Long Bond, 8.5in × 13in**. The `generate-schedule-pdf`
-Edge Function will build the schedule HTML and POST it to an external
+Edge Function builds the schedule HTML and POSTs it to an external
 headless-browser API (e.g. Browserless) to render the PDF; the service-role key
-and the rendering token stay server-side (`supabase/functions/.env`).
+and the rendering token stay server-side. The **Download PDF** button on the
+schedule view calls the function via `supabase.functions.invoke`, receives the
+PDF blob, and triggers the browser download — no PDF work happens in the browser.
+Failures surface an inline error with a retry action. Deploy and configure:
+
+```bash
+supabase functions deploy generate-schedule-pdf
+supabase secrets set \
+  HEADLESS_PDF_API_URL="https://production-sfo.browserless.io/pdf" \
+  HEADLESS_PDF_API_TOKEN="<token>"
+```

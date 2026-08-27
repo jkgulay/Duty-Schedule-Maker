@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
 import { AppLayout } from '@/components/AppLayout/AppLayout';
+import { DownloadPdfButton } from '@/components/DownloadPdfButton/DownloadPdfButton';
 import { ScheduleDocument } from '@/components/ScheduleDocument/ScheduleDocument';
 import { ScheduleStatusBadge } from '@/components/ScheduleStatusBadge/ScheduleStatusBadge';
 import { EmptyState } from '@/components/ui/EmptyState';
@@ -64,22 +65,26 @@ function ScheduleView({ scheduleId }: { scheduleId: string }): ReactNode {
   }
 
   const canEdit = isEditorRole(role) && view.schedule.status === SCHEDULE_STATUS.DRAFT;
+  const pdfFilename = `Duty Schedule - ${view.wardName} - ${title}.pdf`;
 
   return (
     <AppLayout>
-      <div className="mb-4 flex items-center justify-between gap-4">
+      <div className="mb-4 flex flex-wrap items-start justify-between gap-4">
         <h1 className="flex items-center gap-3 text-2xl font-semibold text-gray-900">
           {title}
           <ScheduleStatusBadge status={view.schedule.status} />
         </h1>
-        {canEdit && (
-          <Link
-            className="text-sm text-brand hover:underline"
-            to={scheduleEditorPath(scheduleId)}
-          >
-            Edit
-          </Link>
-        )}
+        <div className="flex items-center gap-4">
+          {canEdit && (
+            <Link
+              className="text-sm text-brand hover:underline"
+              to={scheduleEditorPath(scheduleId)}
+            >
+              Edit
+            </Link>
+          )}
+          <DownloadPdfButton scheduleId={scheduleId} filename={pdfFilename} />
+        </div>
       </div>
 
       <ScheduleDocument

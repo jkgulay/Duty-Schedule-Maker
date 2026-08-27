@@ -5,7 +5,9 @@ import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
-  { ignores: ['dist', 'node_modules'] },
+  // Edge Functions run on Deno with their own toolchain (`deno check`), and are
+  // not part of the app's TS projects.
+  { ignores: ['dist', 'node_modules', 'supabase/functions/**'] },
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommendedTypeChecked],
     files: ['**/*.{ts,tsx}'],

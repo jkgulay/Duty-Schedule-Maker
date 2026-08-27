@@ -20,3 +20,7 @@ additional_redirect_urls = ["http://localhost:5173"]
 
 [storage]
 enabled = true
+
+[functions.generate-schedule-pdf]
+# The function does its own JWT check; the gateway also requires a valid JWT.
+verify_jwt = true

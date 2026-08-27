@@ -74,7 +74,7 @@ on conflict (hospital_id, code) do nothing;
 insert into public.legend_abbreviations
   (hospital_id, abbreviation, meaning, sort_order)
 values
-  ('00000000-0000-0000-0000-0000000000a1', 'R',  'Request',       1),
+  ('00000000-0000-0000-0000-0000000000a1', 'R',  'Request',       1)
 on conflict (hospital_id, abbreviation) do nothing;
 
 -- ---------------------------------------------------------------------------
