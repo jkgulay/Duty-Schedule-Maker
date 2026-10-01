@@ -17,6 +17,10 @@ const MONTH_SELECT_OPTIONS: readonly SelectOption[] = MONTH_OPTIONS.map((option)
   value: String(option.value),
   label: option.label,
 }));
+const PERIOD_OPTIONS: readonly SelectOption[] = [
+  { value: '1', label: '1st Half (1-15)' },
+  { value: '2', label: '2nd Half (16-end)' },
+];
 
 export function CreateScheduleForm({
   wards,
@@ -27,6 +31,7 @@ export function CreateScheduleForm({
   const [wardId, setWardId] = useState(firstWardId);
   const [month, setMonth] = useState(now.getMonth() + 1);
   const [year, setYear] = useState(now.getFullYear());
+  const [period, setPeriod] = useState<1 | 2>(now.getDate() <= 15 ? 1 : 2);
 
   const effectiveWardId = wardId === '' ? firstWardId : wardId;
 
@@ -35,7 +40,7 @@ export function CreateScheduleForm({
     if (effectiveWardId === '') {
       return;
     }
-    onCreate({ wardId: effectiveWardId, month, year });
+    onCreate({ wardId: effectiveWardId, month, year, period });
   }
 
   return (
@@ -66,6 +71,12 @@ export function CreateScheduleForm({
           className="w-24 rounded border border-gray-300 px-2 py-2 text-sm"
         />
       </label>
+      <SelectField
+        label="Period"
+        value={String(period)}
+        options={PERIOD_OPTIONS}
+        onChange={(event) => setPeriod(Number(event.target.value) === 2 ? 2 : 1)}
+      />
       <Button type="submit" disabled={creating || effectiveWardId === ''}>
         {creating ? 'Creating…' : 'New schedule'}
       </Button>

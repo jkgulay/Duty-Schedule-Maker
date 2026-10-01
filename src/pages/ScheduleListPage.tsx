@@ -16,7 +16,7 @@ import { useWards } from '@/hooks/useWards';
 import { isEditorRole } from '@/constants/roles';
 import { scheduleEditorPath, scheduleViewPath } from '@/routes/paths';
 import type { Schedule } from '@/types/schedule.types';
-import { formatMonth } from '@/utils/formatMonth';
+import { formatPeriod } from '@/utils/formatPeriod';
 
 export function ScheduleListPage(): ReactNode {
   useDocumentTitle('Schedules');
@@ -120,7 +120,7 @@ function ScheduleTable({
         <li key={schedule.id} className="flex items-center justify-between gap-4 p-4">
           <span className="flex items-center gap-3 text-sm text-gray-900">
             <span className="font-medium">
-              {formatMonth(schedule.month, schedule.year)}
+              {formatPeriod(schedule.month, schedule.year, schedule.period)}
             </span>
             <ScheduleStatusBadge status={schedule.status} />
           </span>

@@ -21,6 +21,8 @@ function toRow(input: ScheduleEntryInput): ScheduleEntryInsert {
     staff_id: input.staffId,
     day_of_month: input.dayOfMonth,
     shift_type_id: input.shiftTypeId,
+    shift_type_id_2: input.shiftTypeId2,
+    custom_text: input.customText,
     is_request: input.isRequest,
     is_na: input.isNa,
   };

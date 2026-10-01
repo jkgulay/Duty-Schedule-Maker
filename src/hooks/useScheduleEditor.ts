@@ -22,7 +22,7 @@ import type { Staff } from '@/types/staff.types';
 import { decodeCellValue, isEmptyCell } from '@/utils/cellValue';
 import { entryKey, indexEntries } from '@/utils/entryKey';
 import { friendlySaveError } from '@/utils/friendlySaveError';
-import { getMonthDays } from '@/utils/getMonthDays';
+import { getPeriodDays } from '@/utils/getPeriodDays';
 
 interface ScheduleEditorState {
   schedule: Schedule | undefined;
@@ -55,7 +55,10 @@ export function useScheduleEditor(scheduleId: string): ScheduleEditorState {
   );
 
   const days = useMemo<readonly Date[]>(
-    () => (schedule === undefined ? [] : getMonthDays(schedule.month, schedule.year)),
+    () =>
+      schedule === undefined
+        ? []
+        : getPeriodDays(schedule.month, schedule.year, schedule.period),
     [schedule],
   );
 

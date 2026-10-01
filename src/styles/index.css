@@ -44,16 +44,17 @@ body {
     display: table-header-group;
   }
 
-  /* Generous rows so a short roster still fills the sheet; a long roster keeps
-     the same row height and flows onto more pages. */
+  /* Row height shrinks as the roster grows (see computePrintRowMetrics) so
+     the whole document always fits on the single page instead of spilling
+     onto a second one. */
   .schedule-document tbody tr {
-    height: 0.5in;
+    height: var(--print-row-height, 0.5in);
     break-inside: avoid;
   }
 
   .schedule-document td,
   .schedule-document th {
-    padding-top: 4px;
-    padding-bottom: 4px;
+    padding-top: 2px;
+    padding-bottom: 2px;
   }
 }

@@ -12,7 +12,8 @@ export async function fetchSchedulesForWard(wardId: string): Promise<Schedule[]>
     .select('*')
     .eq('ward_id', wardId)
     .order('year', { ascending: false })
-    .order('month', { ascending: false });
+    .order('month', { ascending: false })
+    .order('period', { ascending: false });
   return unwrap(result, 'Load schedules');
 }
 
@@ -28,6 +29,7 @@ export async function createSchedule(input: CreateScheduleInput): Promise<Schedu
       ward_id: input.wardId,
       month: input.month,
       year: input.year,
+      period: input.period,
       status: SCHEDULE_STATUS.DRAFT,
     })
     .select('*')

@@ -11,7 +11,7 @@ import { Spinner } from '@/components/ui/Spinner';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { useScheduleEditor } from '@/hooks/useScheduleEditor';
 import { scheduleViewPath } from '@/routes/paths';
-import { formatMonth } from '@/utils/formatMonth';
+import { formatPeriod } from '@/utils/formatPeriod';
 
 export function ScheduleEditorPage(): ReactNode {
   const { scheduleId } = useParams<{ scheduleId: string }>();
@@ -29,7 +29,7 @@ function ScheduleEditor({ scheduleId }: { scheduleId: string }): ReactNode {
   const title =
     editor.schedule === undefined
       ? 'Edit schedule'
-      : formatMonth(editor.schedule.month, editor.schedule.year);
+      : formatPeriod(editor.schedule.month, editor.schedule.year, editor.schedule.period);
   useDocumentTitle(`Edit ${title}`);
 
   if (editor.isLoading) {

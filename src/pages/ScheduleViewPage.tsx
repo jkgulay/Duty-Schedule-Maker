@@ -14,7 +14,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { useScheduleView } from '@/hooks/useScheduleView';
 import { scheduleEditorPath } from '@/routes/paths';
-import { formatMonth } from '@/utils/formatMonth';
+import { formatPeriod } from '@/utils/formatPeriod';
 
 export function ScheduleViewPage(): ReactNode {
   const { scheduleId } = useParams<{ scheduleId: string }>();
@@ -34,7 +34,7 @@ function ScheduleView({ scheduleId }: { scheduleId: string }): ReactNode {
   const title =
     view.schedule === undefined
       ? 'Schedule'
-      : formatMonth(view.schedule.month, view.schedule.year);
+      : formatPeriod(view.schedule.month, view.schedule.year, view.schedule.period);
   useDocumentTitle(title);
 
   if (view.isLoading) {
@@ -91,6 +91,7 @@ function ScheduleView({ scheduleId }: { scheduleId: string }): ReactNode {
         wardName={view.wardName}
         month={view.schedule.month}
         year={view.schedule.year}
+        period={view.schedule.period}
         staff={view.staff}
         days={view.days}
         entriesByKey={view.entriesByKey}

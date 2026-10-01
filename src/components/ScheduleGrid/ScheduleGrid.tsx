@@ -4,7 +4,6 @@ import { ShiftCell } from '@/components/ShiftCell/ShiftCell';
 import { entryKey } from '@/utils/entryKey';
 import { getWeekdayLabel } from '@/utils/getWeekdayLabel';
 import { indexShiftTypes } from '@/utils/resolveShiftDisplay';
-import { isWeekend } from '@/utils/isWeekend';
 import type { CellState, ScheduleEntry } from '@/types/schedule.types';
 import type { ShiftType } from '@/types/shiftType.types';
 import type { Staff } from '@/types/staff.types';
@@ -47,22 +46,22 @@ export function ScheduleGrid({
           <tr>
             <th
               scope="col"
-              className={`sticky left-0 z-10 border border-gray-300 bg-gray-100 px-2 py-1 text-center print:static ${NAME_COL}`}
+              className={`sticky left-0 z-10 border border-gray-400 bg-slate-800 px-2 py-1 text-center font-bold text-white print:static ${NAME_COL}`}
             >
               Name of Staff
             </th>
             {days.map((day) => {
-              const weekend = isWeekend(day);
+              const weekday = day.getDay();
+              const weekdayColor =
+                weekday === 6 ? 'text-sky-300' : weekday === 0 ? 'text-red-400' : 'text-white';
               return (
                 <th
                   key={day.getDate()}
                   scope="col"
-                  className={`border border-gray-300 bg-gray-100 px-1 py-1 text-center ${
-                    weekend ? 'text-red-600' : 'text-gray-700'
-                  }`}
+                  className="border border-gray-400 bg-slate-800 px-1 py-1 text-center text-white"
                 >
-                  <div className="font-semibold">{day.getDate()}</div>
-                  <div className="font-normal">{getWeekdayLabel(day)}</div>
+                  <div className="font-bold">{day.getDate()}</div>
+                  <div className={`font-semibold ${weekdayColor}`}>{getWeekdayLabel(day)}</div>
                 </th>
               );
             })}
@@ -73,7 +72,7 @@ export function ScheduleGrid({
             <tr key={member.id} className="break-inside-avoid">
               <th
                 scope="row"
-                className={`sticky left-0 z-10 border border-gray-300 bg-white px-2 py-1 text-center font-medium print:static ${NAME_COL}`}
+                className={`sticky left-0 z-10 whitespace-nowrap border border-gray-300 bg-white px-2 py-1 text-center font-medium print:static print:text-[length:var(--print-name-font,10px)] ${NAME_COL}`}
               >
                 {member.full_name}
                 {member.credentials !== '' && `, ${member.credentials}`}

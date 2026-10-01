@@ -65,6 +65,8 @@ export type ScheduleRow = {
   ward_id: string;
   month: number;
   year: number;
+  /** 1 = days 1-15, 2 = day 16 to end of month. */
+  period: 1 | 2;
   status: ScheduleStatus;
   created_by: string | null;
   created_at: string;
@@ -76,6 +78,10 @@ export type ScheduleEntryRow = {
   staff_id: string;
   day_of_month: number;
   shift_type_id: string | null;
+  /** Second shift for a double-shift day; renders as a split-color cell. */
+  shift_type_id_2: string | null;
+  /** Manually typed cell label; falls back to the shift code when null. */
+  custom_text: string | null;
   is_request: boolean;
   is_na: boolean;
   created_at: string;

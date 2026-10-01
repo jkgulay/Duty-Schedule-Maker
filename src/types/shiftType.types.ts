@@ -22,6 +22,8 @@ export interface ShiftDisplay {
   text: string;
   /** Cell background. `null` means "no fill" (render as white/transparent). */
   backgroundHex: string | null;
+  /** Second background for a double-shift (split-color) cell, if any. */
+  backgroundHex2: string | null;
   /** Accessible description, e.g. "7am - 3pm (Request)". */
   label: string;
   isRequest: boolean;

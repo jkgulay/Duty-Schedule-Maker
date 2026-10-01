@@ -13,7 +13,7 @@ import type { LegendAbbreviation, ShiftType } from '@/types/shiftType.types';
 import type { ResolvedSignatory } from '@/types/signatory.types';
 import type { Staff } from '@/types/staff.types';
 import { indexEntries } from '@/utils/entryKey';
-import { getMonthDays } from '@/utils/getMonthDays';
+import { getPeriodDays } from '@/utils/getPeriodDays';
 import { resolveSignatories } from '@/utils/resolveSignatories';
 
 export interface ScheduleViewState {
@@ -43,7 +43,10 @@ export function useScheduleView(scheduleId: string): ScheduleViewState {
   const entriesByKey = useMemo(() => indexEntries(entries), [entries]);
 
   const days = useMemo<readonly Date[]>(
-    () => (schedule === undefined ? [] : getMonthDays(schedule.month, schedule.year)),
+    () =>
+      schedule === undefined
+        ? []
+        : getPeriodDays(schedule.month, schedule.year, schedule.period),
     [schedule],
   );
 

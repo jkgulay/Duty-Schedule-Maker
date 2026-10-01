@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 
 import { ScheduleGrid } from '@/components/ScheduleGrid/ScheduleGrid';
 import { ScheduleHeader } from '@/components/ScheduleHeader/ScheduleHeader';
@@ -10,13 +10,15 @@ import type { ScheduleEntry } from '@/types/schedule.types';
 import type { LegendAbbreviation, ShiftType } from '@/types/shiftType.types';
 import type { ResolvedSignatory } from '@/types/signatory.types';
 import type { Staff } from '@/types/staff.types';
-import { formatMonth } from '@/utils/formatMonth';
+import { formatPeriod } from '@/utils/formatPeriod';
+import { computePrintRowMetrics } from '@/utils/printRowMetrics';
 
 export interface ScheduleDocumentProps {
   hospital: Hospital;
   wardName: string;
   month: number;
   year: number;
+  period: 1 | 2;
   staff: readonly Staff[];
   days: readonly Date[];
   entriesByKey: ReadonlyMap<string, ScheduleEntry>;
@@ -35,6 +37,7 @@ export function ScheduleDocument({
   wardName,
   month,
   year,
+  period,
   staff,
   days,
   entriesByKey,
@@ -42,10 +45,24 @@ export function ScheduleDocument({
   legendAbbreviations,
   signatories,
 }: ScheduleDocumentProps): ReactNode {
+  const { rowHeightIn, fontPx, nameFontPx } = computePrintRowMetrics(
+    staff.length,
+    shiftTypes.length,
+    legendAbbreviations.length,
+  );
+  const printVars = {
+    '--print-row-height': `${rowHeightIn}in`,
+    '--print-cell-font': `${fontPx}px`,
+    '--print-name-font': `${nameFontPx}px`,
+  } as CSSProperties;
+
   return (
-    <article className="schedule-document mx-auto max-w-[1100px] border border-gray-300 bg-white p-6 text-gray-900 print:max-w-none print:border-0 print:p-0">
+    <article
+      className="schedule-document mx-auto max-w-[1100px] border border-gray-300 bg-white p-6 text-gray-900 print:max-w-none print:border-0 print:p-0"
+      style={printVars}
+    >
       <ScheduleHeader hospital={hospital} />
-      <ScheduleTitle monthLabel={formatMonth(month, year)} wardName={wardName} />
+      <ScheduleTitle monthLabel={formatPeriod(month, year, period)} wardName={wardName} />
 
       <div className="mt-2">
         <ScheduleGrid

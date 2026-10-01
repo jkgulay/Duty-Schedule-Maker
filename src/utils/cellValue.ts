@@ -15,12 +15,20 @@ const REQUEST_MARKER = ':R';
 
 export const EMPTY_CELL: CellState = {
   shiftTypeId: null,
+  shiftTypeId2: null,
+  customText: null,
   isRequest: false,
   isNa: false,
 };
 
 export function isEmptyCell(state: CellState): boolean {
-  return state.shiftTypeId === null && !state.isRequest && !state.isNa;
+  return (
+    state.shiftTypeId === null &&
+    state.shiftTypeId2 === null &&
+    (state.customText === null || state.customText === '') &&
+    !state.isRequest &&
+    !state.isNa
+  );
 }
 
 export function entryToCellState(entry: ScheduleEntry | undefined): CellState {
@@ -29,11 +37,18 @@ export function entryToCellState(entry: ScheduleEntry | undefined): CellState {
   }
   return {
     shiftTypeId: entry.shift_type_id,
+    shiftTypeId2: entry.shift_type_id_2,
+    customText: entry.custom_text,
     isRequest: entry.is_request,
     isNa: entry.is_na,
   };
 }
 
+/**
+ * Encodes only the primary-shift part of a cell, for the bulk-assign
+ * toolbar's single select. Bulk-assigning always clears any second shift and
+ * custom text for the targeted cells.
+ */
 export function encodeCellValue(state: CellState): string {
   if (state.isNa) {
     return NOT_AVAILABLE_VALUE;
@@ -66,19 +81,31 @@ export function buildCellOptions(shiftTypes: readonly ShiftType[]): CellValueOpt
   return options;
 }
 
+/**
+ * The option list for a per-cell shift-color `<select>` (primary or second
+ * shift): just "—" plus each shift type's code, no request/NA variants —
+ * those are typed directly into the cell's free-text label instead.
+ */
+export function buildShiftColorOptions(shiftTypes: readonly ShiftType[]): CellValueOption[] {
+  return [
+    { value: '', label: '—' },
+    ...shiftTypes.map((shiftType) => ({ value: shiftType.id, label: shiftType.code })),
+  ];
+}
+
 export function decodeCellValue(value: string): CellState {
   if (value === '') {
     return EMPTY_CELL;
   }
   if (value === NOT_AVAILABLE_VALUE) {
-    return { shiftTypeId: null, isRequest: false, isNa: true };
+    return { ...EMPTY_CELL, isNa: true };
   }
   if (value.endsWith(REQUEST_MARKER)) {
     return {
+      ...EMPTY_CELL,
       shiftTypeId: value.slice(0, -REQUEST_MARKER.length),
       isRequest: true,
-      isNa: false,
     };
   }
-  return { shiftTypeId: value, isRequest: false, isNa: false };
+  return { ...EMPTY_CELL, shiftTypeId: value };
 }
